@@ -1,0 +1,52 @@
+{% extends 'perfectPick/layout.html' %}
+
+{%block title%}
+Search
+{%endblock%}
+
+{%block body%}
+<h3 id="error" style="display: none; color: red; text-align: center; margin-top: 10px;">Invalid Category</h3>
+<div id="searchHeader" style="display: flex; justify-content: center;">
+    <div style="display: flex; justify-content: center; margin-top: 10px;" id="searchGroup">
+        <h2>Searches for &nbsp;</h2>
+        <h2 id="category">{{category}}</h2>
+        <h2>/</h2>
+        <h2 id="query">{{query}}</h2>
+    </div>
+</div>
+<h3 id="noSearches" style="display: none; color: red; text-align: center; margin-top: 10px;">No Searches For Your Query</h3>
+<div id="searchMovies" class="textContainerThings" style="display: flex; flex-wrap: wrap; margin-top: 10px; justify-content: unset;"></div>
+<script>
+    var list = [];
+    if (!(document.querySelector("#category").innerHTML === "Movie Title")) {
+        document.querySelector("#searchGroup").style.display = 'none';
+        document.querySelector("#error").style.display = 'block';
+    }
+    else {
+        // Search the api for the needed queries
+        fetch(`https://api.themoviedb.org/3/search/movie?api_key=ab83a2c7a7f36490276cecada647c422&query=${document.querySelector("#query").innerHTML}`)
+        .then(response=>response.json())
+        .then(movies => {
+            if (movies['results']['length'] === 0) {
+                document.querySelector("#noSearches").style.display = 'block';
+            }
+            movies['results'].forEach(movie=>{
+                if (movie['original_title'] === "Harry Potter and the Philosopher's Stone") {
+                    movie['original_title'] = "Harry Potter and the Sorcerer's Stone"
+                }
+                const element = document.createElement("div");
+                element.innerHTML = `<h2>${movie['original_title']}</h2>
+                                    <img class="moviePoster" src="https://image.tmdb.org/t/p/original/${movie['poster_path']}">
+                `;
+                element.id = movie['id'];
+                element.className = "movie";
+                element.style.border = "solid";
+                document.querySelector("#searchMovies").append(element);
+                element.addEventListener("click", () => {
+                    window.location.href = "/movie/" + movie['id'];
+                });
+            })
+        })
+    }
+</script>
+{%endblock%}

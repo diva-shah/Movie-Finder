@@ -1,0 +1,20 @@
+{%extends "perfectPick/layout.html" %}
+{% load static %}
+
+{%block title%} All Movies {%endblock%}
+
+{%block body%}
+<h1>Hi <strong>{{username}}</strong></h1>
+<h3 style="display: none; color:red; text-align: center;" id="searchErr">Please provide a query</h3>
+<div style="display: flex; justify-content: center;">
+    <form method="get" id="search">
+        <div class="form-group" style="float: left; margin-left: 0px;">
+            <input class="form-control" id="query" name="query" placeholder="Query" style="width: 300px; height: 50px;">
+        </div>
+        <input type="image" src="{% static 'perfectPick/images/search.webp' %}" style="height: 25px; margin-top: 10px; margin-left: 5px;">
+    </form>
+</div>
+<h2>Here are our movies</h2>
+<div id="container" class="textContainerThings" style="display: flex; flex-wrap: wrap; justify-content: unset;"></div>
+
+{%endblock%}

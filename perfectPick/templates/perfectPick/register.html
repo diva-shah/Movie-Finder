@@ -1,0 +1,60 @@
+{% extends "perfectPick/layout.html" %}
+
+{%block title%}Register{%endblock%}
+
+{%block body%}
+    <h1 style="text-align: center; padding-top: 5%;">Register</h1>
+    {% if msg%}
+        <h3 style="color: red; text-align: center;">{{msg}}</h3>
+    {%endif%}
+    <div style="text-align: center;">
+        <form method="post" action="{% url 'register'%}">
+            {%csrf_token%}
+            <div class="form-group" style="padding-left: 20%;">
+                {% if firstName%}
+                    <input style="width: 80%;" class="form-control" name="firstName" type = "text" value = "{{firstName}}" placeholder="First Name">
+                {%else%}
+                    <input style="width: 80%;" class="form-control" name="firstName" type = "text" placeholder="First Name">
+                {%endif%}
+                
+            </div>
+
+            <div class="form-group" style="padding-left: 20%;">
+                {% if lastName%}
+                    <input style="width: 80%;" class="form-control" name="lastName" type = "text" value = "{{lastName}}" placeholder="Last Name">
+                {%else%}
+                    <input style="width: 80%;" class="form-control" name="lastName" type = "text" placeholder="Last Name">
+                {%endif%}
+                
+            </div>
+
+            <div class="form-group" style="padding-left: 20%;">
+                {% if username%}
+                    <input style="width: 80%;" class="form-control" name="username" type = "text" maxlength = "15" value = "{{username}}" placeholder="Username (less than 15 characters)">
+                {%else%}
+                    <input style="width: 80%;" class="form-control" name="username" type = "text" maxlength = "15" placeholder="Username (less than 15 characters)">
+                {%endif%}
+                
+            </div>
+
+            <div class="form-group" style="padding-left: 20%;">
+                {% if email%}
+                    <input style="width: 80%;" class="form-control" value="{{email}}" name="email" type="email" placeholder="Email">
+                {%else%}
+                    <input style="width: 80%;" class="form-control" name="email" type="email" placeholder="Email">
+                {%endif%}
+            </div>
+
+            <div class="form-group" style="padding-left: 20%;">
+                <input style="width: 80%;" class="form-control" name="password" type = "password" placeholder="Password">
+            </div>
+
+            <div class="form-group" style="padding-left: 20%;">
+                <input style="width: 80%;" class="form-control" name="confirm" type = "password" placeholder="Confirm Password">
+            </div>
+
+            <input type="submit" class="btn btn-primary">
+        </form>
+        Have an account? <a href="{% url 'login' %}">Login</a>
+    </div>
+{%endblock%}

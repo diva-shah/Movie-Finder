@@ -1,0 +1,141 @@
+{% extends 'perfectPick/layout.html' %}
+
+{% block body %}
+<div style="display: none;" id="id">{{movieID}}</div>
+<h1 id="movieName" style="text-align: center; margin-bottom: 30px; color: black;"></h1>
+<a href="/" id="goBack" style="display: none; text-align: center; font-size: 150%;">Go back here</a>
+
+<div style="display: none;" id ="appearance" style="display: flex; justify-content: stretch;">
+    <div style="display: flex; justify-content: space-around;" id="otherInfo">
+        <div id="content" style="float: left;">
+        </div>
+        <div id="information" style="width: 50%;">
+            <div id="groupOverview" style="display: flex; justify-content:start; margin-top: 10px; margin-bottom: 10px;">
+                <h3 style="color: blue;">Overview: </h3>
+                &nbsp;&nbsp;&nbsp;
+                <h3 id="description"></h3>
+            </div>
+
+
+            <div id="groupGenres" class="info">
+                <h3 style="color: blue;">Genres: </h3>
+                &nbsp;&nbsp;&nbsp;
+                <h3 id="genres"></h3>
+            </div>
+
+
+            <div id="groupCast" class = "info">
+                <h3 style="color: blue;">Cast: </h3>
+                &nbsp;&nbsp;&nbsp;
+                <h3 id="cast"></h3>
+            </div>
+
+            <div id="ratings"></div>
+
+            <div id="groupRuntime" class="info">
+                <h3 style="color: blue;">Runtime: </h3>
+                &nbsp;&nbsp;&nbsp;
+                <h3 id="runtime"></h3>
+            </div>
+                {% if object in watchlistM.watchlist.all %}
+                    <a href="{% url 'watchlistAdd' movieID 1%}" style="font-size: 32px;" id="watchlistText">Remove Item From Watchlist</a>
+                {%else%}
+                    <a href="{% url 'watchlistAdd' movieID 0%}" style="font-size: 32px;" id="watchlistText">Add Item To Watchlist</a>
+                {%endif%}
+                <div id="tag"></div>
+                {% if object in watchlistM.liked.all %}
+                    <a href="{% url 'like' movieID 0%}" id="liked" style="font-size: 200%; color: red;">&#10084; (Liked)</a>
+                {%else%}
+                    <a href="{% url 'like' movieID 1%}" id="liked" style="font-size: 200%; color: white;">&#9825; (Not Liked)</a>
+                {%endif%}
+        </div>
+    </div>
+</div>
+<!-- <form style="margin-top: 30px;">
+    <div class="form-group" style="padding-left: 20%; height: 30%;">
+        <textarea class="form-control" style="width: 80%" name="comment" type = "text" placeholder="Comment on the movie"></textarea>
+        <input type="submit" class="btn btn-primary" style="margin-top: 10px;" value="Comment">
+    </div>
+</form> -->
+<script>
+    // if (window.innerWidth < 1440) {
+    //     document.querySelector("#tag").innerHTML = "<br>";
+    // }
+    // else {
+    //     document.querySelector("#tag").innerHTML = "";
+    // }
+    fetch(`https://api.themoviedb.org/3/movie/${document.querySelector("#id").innerHTML}?api_key=ab83a2c7a7f36490276cecada647c422`)
+    .then(response=>response.json())
+    .then(movie => {
+        if (movie['original_title'] === "Harry Potter and the Philosopher's Stone") {
+                    movie['original_title'] = "Harry Potter and the Sorcerer's Stone"
+                }
+        if (movie['success'] === false) {
+            document.querySelector("#movieName").innerHTML = "Invalid Movie ID";
+            document.querySelector("#movieName").style.color = "red";
+            
+            document.querySelector("#goBack").style.display = 'block';
+
+        }
+        else{
+            document.querySelector("#appearance").style.display = 'block';
+            // Update title
+
+            document.querySelector("title").innerHTML = movie['original_title'];
+            // Header of website
+            document.querySelector("#movieName").innerHTML = movie['original_title'];
+            // Image of poster
+            const image = document.createElement("img")
+            image.src = `https://image.tmdb.org/t/p/original/${movie['poster_path']}`;
+            image.style.width = "425px";
+            document.querySelector("#content").append(image);
+            // Update all the information of overview
+            document.querySelector("#description").innerHTML = movie['overview'];
+
+            //genres
+            movie['genres'].forEach(genre => {
+                if (document.querySelector("#genres").innerHTML === "") {
+                    document.querySelector("#genres").innerHTML= document.querySelector("#genres").innerHTML + " " + genre['name'];
+                }
+                else {
+                    document.querySelector("#genres").innerHTML= document.querySelector("#genres").innerHTML + ", " + genre['name'];
+                }
+            })
+            //cast, ratings, rotten tomatoes
+            fetch(`https://www.omdbapi.com/?t=${movie['original_title']}&apikey=2936ddba`)
+            .then(response=>response.json())
+            .then(info => {
+                
+                document.querySelector("#cast").innerHTML = info['Actors'];
+                info['Ratings'].forEach(rating => {
+                    const group = document.createElement("div");
+                    const rate = document.createElement("h3");
+                    rate.style.color = "blue";
+                    group.className = "info";
+                    rate.innerHTML = rating['Source'] + ":&nbsp;&nbsp;&nbsp;";
+                    const content = document.createElement("h3");
+                    content.innerHTML = rating['Value'];
+                    group.append(rate);
+                    group.append(content);
+                    document.querySelector("#ratings").append(group);
+
+
+                })
+                if (document.querySelector("#genres").innerHTML === "" || document.querySelector("#genres").innerHTML === undefined)
+                {
+                    document.querySelector("#genres").innerHTML === "None Given";   
+                }
+                if (document.querySelector("#cast").innerHTML === "" || document.querySelector("#cast").innerHTML === undefined) {
+                    document.querySelector("#cast").innerHTML === "None Given"; 
+                }
+            })
+
+            //runtime
+            document.querySelector("#runtime").innerHTML = movie['runtime'] + " minutes";
+            
+        }
+
+
+    })
+</script>
+{% endblock %}

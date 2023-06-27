@@ -1,0 +1,41 @@
+{% extends 'perfectPick/layout.html' %}
+
+{%block title%}Liked Movies{%endblock%}
+
+{%block body%}
+    <h2 style="text-align: center; margin-top: 10px;">Your Liked Movies</h2>
+    <script>empty=false;</script>
+    <div style="display: flex; flex-wrap: wrap;" class="textContainerThings" id="likedContainer">
+        {% for item in liked.liked.all %}
+            <div class="likeMovies" style="display: none;">{{item.movieID}}</div>
+        {%empty%}
+            <script>
+                empty=true;
+            </script>
+        {%endfor%}
+    </div>
+    <h3 style="text-align: center; margin-top: 10px; display: none;" id="none">You have not liked any movie yet</h3>
+
+<script>
+    if (empty === true) {
+        document.querySelector("#none").style.display = 'block';
+    }
+    document.querySelectorAll(".likeMovies").forEach(liked => {
+        fetch(`https://api.themoviedb.org/3/movie/${liked['innerHTML']}?api_key=ab83a2c7a7f36490276cecada647c422`)
+        .then(response=>response.json())
+        .then(movie => {
+            const element = document.createElement("div");
+            element.innerHTML = `<h2>${movie['original_title']}</h2>
+                                <img class="moviePoster" src="https://image.tmdb.org/t/p/original/${movie['poster_path']}">
+            `;
+            element.id = movie['original_title'];
+            element.className = "movie";
+            element.style.border = "solid";
+            document.querySelector("#likedContainer").append(element);
+            element.addEventListener("click", () => {
+                window.location.href = "/movie/" + movie['id'];
+            });
+        })
+    })
+</script>
+{%endblock%}

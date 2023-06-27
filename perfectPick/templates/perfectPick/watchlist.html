@@ -1,0 +1,45 @@
+{% extends 'perfectPick/layout.html' %}
+
+{% block title%}Watchlist{% endblock %}
+
+{%block body%}
+<script>
+    empty=false;
+</script>
+<h2 style="text-align: center; margin-top: 10px;">Watchlist for {{user}}</h2>
+<div id="watchlistContainer" class="textContainerThings" style="display: flex; flex-wrap: wrap; justify-content: unset;">
+    {%for movie in items.watchlist.all%}
+        <div class="idOfItem" style="display: none;">{{movie.movieID}}</div>
+        <script>
+            empty=false;
+        </script>
+    {%empty%}
+        <script>
+            empty = true;
+        </script>
+    {%endfor%}
+</div>
+<h3 style="margin-top: 10px; text-align: center; display: none;" id="empty">Nothing added to your Watchlist</h3>
+<script>
+    if (empty === true) {
+        document.querySelector("#empty").style.display = "block";
+    }
+    document.querySelectorAll(".idOfItem").forEach(item=>{
+        fetch(`https://api.themoviedb.org/3/movie/${item['innerHTML']}?api_key=ab83a2c7a7f36490276cecada647c422`)
+        .then(response=>response.json())
+        .then(movie => {
+            const element = document.createElement("div");
+            element.innerHTML = `<h2>${movie['original_title']}</h2>
+                                <img class="moviePoster" src="https://image.tmdb.org/t/p/original/${movie['poster_path']}">
+            `;
+            element.id = movie['original_title'];
+            element.className = "movie";
+            element.style.border = "solid";
+            document.querySelector("#watchlistContainer").append(element);
+            element.addEventListener("click", () => {
+                window.location.href = "/movie/" + movie['id'];
+            });
+        })
+    })
+</script>
+{%endblock%}

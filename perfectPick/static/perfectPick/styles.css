@@ -1,0 +1,30 @@
+.custom {
+    background-color: purple;
+    display: flex;
+    justify-content: space-between;
+}
+
+.movie {
+    width: 33%;
+    margin: 2px;
+}
+
+.moviePoster {
+    width: 60%;
+}
+
+.info {
+    display: flex; 
+    justify-content:safe;
+    margin-bottom: 10px;
+    height: 10%;
+}
+
+#query {
+    border-color: cornflowerblue;
+}
+
+#select {
+    border-radius: 5px;
+    border-color: cornflowerblue;
+}
